@@ -124,51 +124,47 @@ submit.addEventListener('click', () => {
     else {
         data = document.getElementById('requestJsonText').value;
 
-        // if user didnt' gave us stringified version of data, we need to convert it to stringify version to create a error free post Request
-
-        // basically we can just, parse it and if it parsed successfully, then it means user gave stringified version of data, else we need to stringify it ourself
-
-        try {
-            JSON.parse(data);
-            // if it is parsed successfully then, we are good to go, else
-        } catch (error) { // if syntax error occured, then we need to stringify it ourself
-            
-            console.log(data);
-            data = JSON.stringify(data).replace(/\\n/g, ''); // replacing the new line character
-        }
     }
     // logging our data into console
     console.log(data);
 
-    // If my request type is GET, then we have to create a GET request
+    // if user didnt' gave us stringified version of data, then we have to show the error, cuz the data cant be parsed
+    try {
+        JSON.parse(data);
+        // if it is parsed successfully then, we are good to go, else
+        // If my request type is GET, then we have to create a GET request
 
-    if (requestType == 'GET') {
-        // creating a get request using fetch API
-        fetch(url, { // fetch will return a promise
-            method: 'GET'
-        }).then(response => response.text()).then((text) => { // response.text will also return a promise
+        if (requestType == 'GET') {
+            // creating a get request using fetch API
+            fetch(url, { // fetch will return a promise
+                method: 'GET'
+            }).then(response => response.text()).then((text) => { // response.text will also return a promise
 
-            // inserting our data to our responsePrism, where it was supposed to be
-            document.getElementById('responsePrism').innerHTML = text;
-            Prism.highlightAll();
-        });
-    }
-    // creating a POST request
-    else { 
-        fetch(url, { // fetch will return a promise
-            method: 'POST',
-            body: data, // sending the data as a string
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            }
-        }).then(response => response.text()).then((text) => { // response.text will also return a promise
+                // inserting our data to our responsePrism, where it was supposed to be
+                document.getElementById('responsePrism').innerHTML = text;
+                Prism.highlightAll();
+            });
+        }
+        // creating a POST request
+        else {
+            fetch(url, { // fetch will return a promise
+                method: 'POST',
+                body: data, // sending the data as a string
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            }).then(response => response.text()).then((text) => { // response.text will also return a promise
 
-            // inserting our data to our responsePrism, where it was supposed to be
-            document.getElementById('responsePrism').innerHTML = text;
-            Prism.highlightAll();
-        });
+                // inserting our data to our responsePrism, where it was supposed to be
+                document.getElementById('responsePrism').innerHTML = text;
+                Prism.highlightAll();
+            });
 
+        }
+    } catch (error) { // if syntax error occured, then we need to stringify it ourself
+        document.getElementById('responsePrism').innerHTML = `Please Provide Valid JSON String`;
     }
 });
 
 // for post request, https://jsonplaceholder.typicode.com/posts
+// for get request, https://jsonplaceholder.typicode.com/posts/1
